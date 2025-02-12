@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuthApp</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        header, footer {
+            background-color: #f79b33;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: auto;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            background-color: #f79b33;
+            color: white;
+        }
+        button:hover {
+            background-color: #915c20;
+        }
+        .notification {
+            display: none;
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">AuthApp</div>
+            <div>
+                <a href="#" id="home-link">Home</a>
+                <a href="#" id="register-link">Register</a>
+                <a href="#" id="login-link">Login</a>
+            </div>
+        </nav>
+    </header>
+    <div class="container" id="content">
+        <h1>Welcome to AuthApp</h1>
+        <button id="login-button">Login</button>
+        <button id="register-button">Register</button>
+    </div>
+    <footer>
+        &copy; 2023 AuthApp. All rights reserved.
+    </footer>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        const users = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('home-link').addEventListener('click', showHome);
+            document.getElementById('register-link').addEventListener('click', showRegister);
+            document.getElementById('login-link').addEventListener('click', showLogin);
+            document.getElementById('login-button').addEventListener('click', showLogin);
+            document.getElementById('register-button').addEventListener('click', showRegister);
+        });
+
+        function showHome() {
+            document.getElementById('content').innerHTML = `
+                <h1>Welcome to AuthApp</h1>
+                <button id="login-button">Login</button>
+                <button id="register-button">Register</button>
+            `;
+            document.getElementById('login-button').addEventListener('click', showLogin);
+            document.getElementById('register-button').addEventListener('click', showRegister);
+        }
+
+        function showLogin() {
+            document.getElementById('content').innerHTML = `
+                <h1>Login</h1>
+                <form id="login-form">
+                    <input type="text" id="login-username" placeholder="Username" required><br><br>
+                    <input type="password" id="login-password" placeholder="Password" required><br>
+                    <button type="submit">Login</button>
+                </form>
+            `;
+            document.getElementById('login-form').addEventListener('submit', login);
+        }
+
+        function showRegister() {
+            document.getElementById('content').innerHTML = `
+                <h1>Register</h1>
+                <form id="register-form">
+                    <input type="text" id="register-username" placeholder="Username" required><br><br>
+                    <input type="email" id="register-email" placeholder="Email" required><br><br>
+                    <input type="password" id="register-password" placeholder="Password" required><br>
+                    <button type="submit">Register</button>
+                </form>
+            `;
+            document.getElementById('register-form').addEventListener('submit', register);
+        }
+
+        function showDashboard() {
+            document.getElementById('content').innerHTML = `
+                <h1>Dashboard</h1>
+                <p>Welcome to your dashboard!</p>
+                <button id="logout-button">Logout</button>
+            `;
+            document.getElementById('logout-button').addEventListener('click', showHome);
+        }
+
+        function login(event) {
+            event.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const user = users.find(user => user.username === username && user.password === password);
+            if (user) {
+                showNotification(`Logged in as ${username}`);
+                showDashboard();
+            } else {
+                showNotification('Invalid username or password', true);
+            }
+        }
+
+        function register(event) {
+            event.preventDefault();
+            const username = document.getElementById('register-username').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const userExists = users.some(user => user.username === username || user.email === email);
+            if (userExists) {
+                showNotification('Username or email already exists', true);
+            } else {
+                users.push({ username, email, password });
+                showNotification(`Registered as ${username}`);
+                showLogin();
+            }
+        }
+
+        function showNotification(message, isError = false) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.backgroundColor = isError ? '#f8d7da' : '#d4edda';
+            notification.style.color = isError ? '#721c24' : '#155724';
+            notification.style.borderColor = isError ? '#f5c6cb' : '#c3e6cb';
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
